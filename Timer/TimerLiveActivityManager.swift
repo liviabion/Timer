@@ -18,6 +18,7 @@ final class TimerLiveActivityManager {
         let attributes = TimerActivityAttributes(
             name: "Meu cronômetro"
         )
+
         let content = ActivityContent(
             state: makeContentState(from: stopwatch),
             staleDate: nil
@@ -71,12 +72,15 @@ final class TimerLiveActivityManager {
         self.activity = nil
     }
 
-    private func resolveActivity() -> Activity<TimerActivityAttributes>? {
+    private func resolveActivity()
+        -> Activity<TimerActivityAttributes>? {
         if let activity, activity.activityState == .active {
             return activity
         }
 
-        activity = Activity<TimerActivityAttributes>.activities.first
+        activity =
+            Activity<TimerActivityAttributes>.activities.first
+
         return activity
     }
 
