@@ -81,6 +81,7 @@ struct TimerLiveActivityLiveActivity: Widget {
             } minimal: {
                 Image(systemName: "stopwatch")
             }
+            .keylineTint(.primary)
         }
     }
 }
