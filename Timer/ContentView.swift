@@ -3,6 +3,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var stopwatch = StopwatchState()
+    @State private var liveActivityManager = TimerLiveActivityManager()
 
     var body: some View {
         VStack(alignment: .center, spacing: 10) {
@@ -23,18 +24,40 @@ struct ContentView: View {
             HStack {
                 Button("Iniciar") {
                     stopwatch.start(at: .now)
+                    let currentState = stopwatch
+
+                    Task {
+                        await liveActivityManager.startOrResume(
+                            with: currentState
+                        )
+                    }
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(stopwatch.isRunning)
 
                 Button("Pausar") {
                     stopwatch.pause(at: .now)
+                    let currentState = stopwatch
+
+                    Task {
+                        await liveActivityManager.update(
+                            with: currentState
+                        )
+                    }
                 }
                 .buttonStyle(.bordered)
                 .disabled(!stopwatch.isRunning)
 
                 Button("Encerrar", role: .destructive) {
+                    var finalState = stopwatch
+                    finalState.pause(at: .now)
                     stopwatch.reset()
+
+                    Task {
+                        await liveActivityManager.end(
+                            with: finalState
+                        )
+                    }
                 }
                 .buttonStyle(.bordered)
             }

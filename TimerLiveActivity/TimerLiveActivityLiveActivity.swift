@@ -6,75 +6,117 @@
 //
 
 import ActivityKit
-import WidgetKit
 import SwiftUI
+import WidgetKit
 
-struct TimerLiveActivityAttributes: ActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        // Dynamic stateful properties about your activity go here!
-        var emoji: String
+struct TimerLiveActivityView: View {
+    let attributes: TimerActivityAttributes
+    let state: TimerActivityAttributes.ContentState
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Text(attributes.name)
+                .font(.headline)
+
+            elapsedTime
+                .frame(maxWidth: .infinity, alignment: .center)
+                .multilineTextAlignment(.center)
+
+            Text(state.isRunning ? "Em andamento" : "Pausado")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding()
     }
 
-    // Fixed non-changing properties about your activity go here!
-    var name: String
-}
+    @ViewBuilder
+    private var elapsedTime: some View {
+        if state.isRunning, let startedAt = state.startedAt {
+            let referenceDate = startedAt.addingTimeInterval(
+                -state.accumulatedTime
+            )
 
-struct TimerLiveActivityLiveActivity: Widget {
-    var body: some WidgetConfiguration {
-        ActivityConfiguration(for: TimerLiveActivityAttributes.self) { context in
-            // Lock screen/banner UI goes here
-            VStack {
-                Text("Hello \(context.state.emoji)")
-            }
-            .activityBackgroundTint(Color.cyan)
-            .activitySystemActionForegroundColor(Color.black)
-
-        } dynamicIsland: { context in
-            DynamicIsland {
-                // Expanded UI goes here.  Compose the expanded UI through
-                // various regions, like leading/trailing/center/bottom
-                DynamicIslandExpandedRegion(.leading) {
-                    Text("Leading")
-                }
-                DynamicIslandExpandedRegion(.trailing) {
-                    Text("Trailing")
-                }
-                DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.state.emoji)")
-                    // more content
-                }
-            } compactLeading: {
-                Text("L")
-            } compactTrailing: {
-                Text("T \(context.state.emoji)")
-            } minimal: {
-                Text(context.state.emoji)
-            }
-            .widgetURL(URL(string: "http://www.apple.com"))
-            .keylineTint(Color.red)
+            Text(
+                timerInterval: referenceDate...Date.distantFuture,
+                countsDown: false,
+                showsHours: true
+            )
+            .font(.title)
+            .monospacedDigit()
+        } else {
+            Text(
+                Duration.seconds(state.accumulatedTime),
+                format: .time(
+                    pattern: .hourMinuteSecond(padHourToLength: 2)
+                )
+            )
+            .font(.title)
+            .monospacedDigit()
         }
     }
 }
 
-extension TimerLiveActivityAttributes {
-    fileprivate static var preview: TimerLiveActivityAttributes {
-        TimerLiveActivityAttributes(name: "World")
+struct TimerLiveActivityLiveActivity: Widget {
+    var body: some WidgetConfiguration {
+        ActivityConfiguration(for: TimerActivityAttributes.self) { context in
+            TimerLiveActivityView(
+                attributes: context.attributes,
+                state: context.state
+            )
+            .activityBackgroundTint(.cyan)
+            .activitySystemActionForegroundColor(.black)
+        } dynamicIsland: { context in
+            DynamicIsland {
+                DynamicIslandExpandedRegion(.center) {
+                    TimerLiveActivityView(
+                        attributes: context.attributes,
+                        state: context.state
+                    )
+                }
+            } compactLeading: {
+                Image(systemName: "stopwatch")
+            } compactTrailing: {
+                Text(context.state.isRunning ? "Ativo" : "Pausa")
+                    .font(.caption2)
+            } minimal: {
+                Image(systemName: "stopwatch")
+            }
+            .keylineTint(.cyan)
+        }
     }
 }
 
-extension TimerLiveActivityAttributes.ContentState {
-    fileprivate static var smiley: TimerLiveActivityAttributes.ContentState {
-        TimerLiveActivityAttributes.ContentState(emoji: "😀")
-     }
-     
-     fileprivate static var starEyes: TimerLiveActivityAttributes.ContentState {
-         TimerLiveActivityAttributes.ContentState(emoji: "🤩")
-     }
+extension TimerActivityAttributes {
+    fileprivate static var preview: TimerActivityAttributes {
+        TimerActivityAttributes(name: "Meu cronômetro")
+    }
 }
 
-#Preview("Notification", as: .content, using: TimerLiveActivityAttributes.preview) {
-   TimerLiveActivityLiveActivity()
+extension TimerActivityAttributes.ContentState {
+    fileprivate static var running: TimerActivityAttributes.ContentState {
+        TimerActivityAttributes.ContentState(
+            accumulatedTime: 30,
+            startedAt: .now,
+            isRunning: true
+        )
+    }
+
+    fileprivate static var paused: TimerActivityAttributes.ContentState {
+        TimerActivityAttributes.ContentState(
+            accumulatedTime: 90,
+            startedAt: nil,
+            isRunning: false
+        )
+    }
+}
+
+#Preview(
+    "Tela Bloqueada",
+    as: .content,
+    using: TimerActivityAttributes.preview
+) {
+    TimerLiveActivityLiveActivity()
 } contentStates: {
-    TimerLiveActivityAttributes.ContentState.smiley
-    TimerLiveActivityAttributes.ContentState.starEyes
+    TimerActivityAttributes.ContentState.running
+    TimerActivityAttributes.ContentState.paused
 }

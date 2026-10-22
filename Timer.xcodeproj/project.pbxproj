@@ -56,6 +56,13 @@
 			);
 			target = 000000000000000100000000 /* Timer */;
 		};
+		274114073089554300B37C7C /* Exceptions for "Shared" folder in "TimerLiveActivityExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TimerActivityAttributes.swift,
+			);
+			target = 2741130630893EBA00B37C7C /* TimerLiveActivityExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -73,6 +80,14 @@
 				2741131A30893EBB00B37C7C /* Exceptions for "TimerLiveActivity" folder in "TimerLiveActivityExtension" target */,
 			);
 			path = TimerLiveActivity;
+			sourceTree = "<group>";
+		};
+		274114013089499B00B37C7C /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				274114073089554300B37C7C /* Exceptions for "Shared" folder in "TimerLiveActivityExtension" target */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -96,6 +111,7 @@
 		000000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+				274114013089499B00B37C7C /* Shared */,
 				000000000000000000000010 /* Timer */,
 				2741130D30893EBA00B37C7C /* TimerLiveActivity */,
 				2741130830893EBA00B37C7C /* Frameworks */,
@@ -140,6 +156,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				000000000000000000000010 /* Timer */,
+				274114013089499B00B37C7C /* Shared */,
 			);
 			name = Timer;
 			productName = MyApp;
