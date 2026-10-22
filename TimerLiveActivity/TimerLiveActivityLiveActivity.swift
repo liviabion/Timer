@@ -12,6 +12,7 @@ import WidgetKit
 struct TimerLiveActivityView: View {
     let attributes: TimerActivityAttributes
     let state: TimerActivityAttributes.ContentState
+    let foregroundColor: Color
 
     var body: some View {
         VStack(spacing: 8) {
@@ -26,7 +27,7 @@ struct TimerLiveActivityView: View {
                 .font(.caption)
         }
         .padding()
-        .foregroundStyle(.black)
+        .foregroundStyle(foregroundColor)
     }
 
     @ViewBuilder
@@ -43,11 +44,20 @@ struct TimerLiveActivityView: View {
             )
             .font(.title)
             .monospacedDigit()
+        } else if state.accumulatedTime >= 3_600 {
+            Text(
+                Duration.seconds(state.accumulatedTime),
+                format: .time(
+                    pattern: .hourMinuteSecond(padHourToLength: 1)
+                )
+            )
+            .font(.title)
+            .monospacedDigit()
         } else {
             Text(
                 Duration.seconds(state.accumulatedTime),
                 format: .time(
-                    pattern: .hourMinuteSecond(padHourToLength: 2)
+                    pattern: .minuteSecond(padMinuteToLength: 1)
                 )
             )
             .font(.title)
@@ -61,7 +71,8 @@ struct TimerLiveActivityLiveActivity: Widget {
         ActivityConfiguration(for: TimerActivityAttributes.self) { context in
             TimerLiveActivityView(
                 attributes: context.attributes,
-                state: context.state
+                state: context.state,
+                foregroundColor: .black
             )
             .activityBackgroundTint(.white)
             .activitySystemActionForegroundColor(.black)
@@ -70,7 +81,8 @@ struct TimerLiveActivityLiveActivity: Widget {
                 DynamicIslandExpandedRegion(.center) {
                     TimerLiveActivityView(
                         attributes: context.attributes,
-                        state: context.state
+                        state: context.state,
+                        foregroundColor: .white
                     )
                 }
             } compactLeading: {
