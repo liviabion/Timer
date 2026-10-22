@@ -24,9 +24,9 @@ struct TimerLiveActivityView: View {
 
             Text(state.isRunning ? "Em andamento" : "Pausado")
                 .font(.caption)
-                .foregroundStyle(.secondary)
         }
         .padding()
+        .foregroundStyle(.black)
     }
 
     @ViewBuilder
@@ -63,7 +63,7 @@ struct TimerLiveActivityLiveActivity: Widget {
                 attributes: context.attributes,
                 state: context.state
             )
-            .activityBackgroundTint(.cyan)
+            .activityBackgroundTint(.white)
             .activitySystemActionForegroundColor(.black)
         } dynamicIsland: { context in
             DynamicIsland {
@@ -81,7 +81,6 @@ struct TimerLiveActivityLiveActivity: Widget {
             } minimal: {
                 Image(systemName: "stopwatch")
             }
-            .keylineTint(.cyan)
         }
     }
 }
